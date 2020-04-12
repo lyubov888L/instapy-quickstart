@@ -1,9 +1,56 @@
-> **Please Note**: The scripts for Linux and RaspberryPi still have to be added!
+# imports
+ from instapy import InstaPy
+ from instapy import smart_run
 
-### Starting InstaPy
+ # login credentials
+ insta_username = 'subbotina_cos'
+ insta_password = 'subbotinale'
 
-Starting InstaPy with the start scripts is as easy as double clicking the file for your system.   
-A command line will open and start to run InstaPy for you.
-The actions taken by InstaPy will be logged there.
+ # get an InstaPy session!
+ # set headless_browser=True to run InstaPy in the background
+ session = InstaPy(username=insta_username,
+                   password=insta_password,
+                   headless_browser=False)
 
-> If you see any error messages, please search the [issues](https://github.com/timgrossmann/InstaPy/issues) for your error, there most likely already will be a solution to that.
+ with smart_run(session):
+     """ Activity flow """
+     # general settings
+     session.set_relationship_bounds(enabled=True,
+                                     delimit_by_numbers=True,
+                                     max_followers=4590,
+                                     min_followers=45,
+                                     min_following=77)
+
+     session.set_dont_include(["friend1", "friend2", "friend3"])
+     session.set_dont_like(["pizza", "#store"])
+
+     # activities
+
+     """ Massive Follow of users followers (I suggest to follow not less than
+     3500/4000 users for better results)...
+     """
+     session.follow_user_followers(['user1', 'user2', 'user3'], amount=800,
+                                   randomize=False, interact=False)
+
+     """ First step of Unfollow action - Unfollow not follower users...
+     """
+     session.unfollow_users(amount=500, InstapyFollowed=(True, "nonfollowers"),
+                            style="FIFO",
+                            unfollow_after=12 * 60 * 60, sleep_delay=601)
+
+     """ Second step of Massive Follow...
+     """
+     session.follow_user_followers(['user1', 'user2', 'user3'], amount=800,
+                                   randomize=False, interact=False)
+
+     """ Second step of Unfollow action - Unfollow not follower users...
+     """
+     session.unfollow_users(amount=500, InstapyFollowed=(True, "nonfollowers"),
+                            style="FIFO",
+                            unfollow_after=12 * 60 * 60, sleep_delay=601)
+
+     
+     """
+     session.unfollow_users(amount=500, InstapyFollowed=(True, "all"),
+                            style="FIFO", unfollow_after=24 * 60 * 60,
+                            sleep_delay=601)
